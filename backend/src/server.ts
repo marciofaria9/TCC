@@ -27,4 +27,4 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const port = 3333;
 
-app.listen(port, () => console.log(`Server On Port ${port}`))
+app.listen(port, () => console.log(`Server Up on Port ${port}`))
