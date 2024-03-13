@@ -32,7 +32,6 @@ class AuthUserService {
         }
 
         // gerar token
-
         const token = sign(
             //header
             {
