@@ -13,7 +13,7 @@ export function isAuthenticated(
     //receber o token
     const authToken = req.headers.authorization
 
-    //encerra sem token
+    //encerra se estiver sem o token
     if (!authToken) {
         return res.status(401).end();
     }
@@ -27,6 +27,10 @@ export function isAuthenticated(
             token,
             process.env.JWT_SECRET
         ) as Payload;
+
+
+    // Recupera o ID do token e coloca dentro de uma variavel dentro do sub
+     req.user_id = sub;
 
        return next();
 

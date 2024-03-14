@@ -20,5 +20,4 @@ class AuthUserController {
     }
 }
 
-
 export { AuthUserController }
