@@ -13,7 +13,7 @@ export function isAuthenticated(
     //receber o token
     const authToken = req.headers.authorization
 
-    //encerra se estiver sem o token
+    //já encerra se estiver sem o token
     if (!authToken) {
         return res.status(401).end();
     }
