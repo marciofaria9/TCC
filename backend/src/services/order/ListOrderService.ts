@@ -13,7 +13,7 @@ class ListOrderService {
                 created_at: 'desc'
             }
         })
-    
+
         return orders;
 
     }
