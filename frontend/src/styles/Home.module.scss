@@ -17,6 +17,11 @@
   flex-direction: column;
   padding: 2rem 1.5rem;
 
+  h1 {
+    color: white;
+    padding-bottom: 1rem;
+  }
+
   form {
     width: 90%;
     display: flex;
@@ -30,14 +35,14 @@
 
 }
 
-.text{
+.text {
   margin-top: 1rem;
   color: var(--white);
   cursor: pointer;
 }
 
-@media(max-width: 620px){
-  .login{
+@media(max-width: 620px) {
+  .login {
     width: 90%;
   }
 
