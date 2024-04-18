@@ -7,11 +7,13 @@ import logoImg from '../../public/logo.svg';
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button';
 import { AuthContext } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 import Link from 'next/link';
 
 export default function Home() {
   const { signIn } = useContext(AuthContext)
+
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,12 +23,21 @@ export default function Home() {
   async function handleLogin(event: FormEvent) {
     event.preventDefault();
 
+    if (email === '' || password === '') {
+      toast.warning("preencha os dados")
+      return;
+    }
+
+    setLoading(true)
+
     let data = {
       email,
       password
     }
 
     await signIn(data)
+
+    setLoading(false)
 
   }
 
@@ -54,16 +65,13 @@ export default function Home() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Button
-              type="submit"
-              loading={false}
-            >
+            <Button type="submit" loading={loading}>
               Acessar
             </Button>
           </form>
 
           <Link href="/signup">
-            <span className={styles.text}>Ja possui uma conta? Faça login</span>
+            <span className={styles.text}>Não posseu conta? Cadastrar</span>
           </Link>
 
 
