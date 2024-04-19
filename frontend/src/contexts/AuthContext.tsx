@@ -1,9 +1,10 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState, useEffect } from 'react';
 import { api } from '../services/apiClient'
 
 import { destroyCookie, setCookie, parseCookies } from 'nookies'
 import Router from 'next/router'
 import { toast } from 'react-toastify';
+import { parseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 
 type AuthContextData = {
@@ -51,6 +52,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProps>()
   const isAuthenticated = !!user;
 
+  useEffect(() => {
+    // tentar pegar o token no cookie
+    const { '@nextauth.token': token } = parseCookies()
+
+    if (token) {
+      api.get('/me').then(response => {
+        const { id, name, email } = response.data
+
+        setUser({
+          id,
+          name,
+          email
+        })
+      })
+        .catch(() => {
+          // se deu erro, desloga
+          signOut();
+
+        })
+    }
+
+  }, [])
+
   async function signIn({ email, password }: SignInProps) {
     try {
       const response = await api.post('/session', {
@@ -74,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       //passsar o token para as proximas reqs
       api.defaults.headers['Authorization'] = `Bearer ${token}`
-      
+
       toast.success('Bem vindo!')
       Router.push('/dashboard')
 
