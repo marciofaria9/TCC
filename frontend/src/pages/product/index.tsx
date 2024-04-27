@@ -1,33 +1,52 @@
-import { useState, ChangeEvent } from 'react'
+
+import { canSSRAuth } from '../../utils/canSSRAuth';
+import { setupAPIClient } from '../../services/api';
+import { useState, ChangeEvent, FormEvent } from 'react'
 import Head from 'next/head';
 import styles from './styles.module.scss';
-import {Header} from '../../components/Header'
-
-import { canSSRAuth } from '../../utils/canSSRAuth'
-
+import { Header } from '../../components/Header'
 import { FiUpload } from 'react-icons/fi'
+import { toast } from 'react-toastify';
 
 
-export default function Product(){
+//tipando a categoria para a lista
+type ItemProps = {
+  id: string;
+  name: string;
+}
+
+interface CategoryProps {
+  categoryList: ItemProps[];
+}
+
+
+
+export default function Product({ categoryList }: CategoryProps) {
+
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
 
 
   const [avatarUrl, setAvatarUrl] = useState('');
   const [imageAvatar, setImageAvatar] = useState<File | null>(null);
+  const [categories, setCategories] = useState(categoryList || []);
+  const [categorySelected, setCategorySelected] = useState(0);
 
 
-  function handleFile(e: ChangeEvent<HTMLInputElement>){
+  function handleFile(e: ChangeEvent<HTMLInputElement>) {
 
-    if(!e.target.files){
+    if (!e.target.files) {
       return;
     }
 
     const image = e.target.files[0];
 
-    if(!image){
+    if (!image) {
       return;
     }
 
-    if(image.type === 'image/jpeg' || image.type === 'image/png'){
+    if (image.type === 'image/jpeg' || image.type === 'image/png') {
 
       setImageAvatar(image);
       setAvatarUrl(URL.createObjectURL(e.target.files[0]))
@@ -36,18 +55,64 @@ export default function Product(){
 
   }
 
-  return(
+  //quando seleciana uma nova categoria na lista
+  function handleChangeCategory(e: ChangeEvent<HTMLSelectElement>) {
+    setCategorySelected(Number(e.target.value));
+
+  }
+
+
+  //cadastrar produto
+  async function handleRegister(event: FormEvent) {
+    event.preventDefault();
+
+    try {
+      const data = new FormData();
+      if (name === '' || price === '' || description === '' || imageAvatar === null) {
+        toast.error("Preencha todos os campo")
+        return;
+      }
+
+      data.append('name', name)
+      data.append('price', price)
+      data.append('description', description)
+      data.append('category_id', categories[categorySelected].id)
+      data.append('file', imageAvatar)
+
+      console.log(data)
+
+      const apliClient = setupAPIClient();
+      await apliClient.post('/product', data)
+
+      toast.success('Cadastrado com sucesso')
+
+      setName('')
+      setPrice('')
+      setDescription('')
+      setImageAvatar(null)
+      setAvatarUrl('')
+
+    } catch (err) {
+      console.log(err);
+      toast.error("Erro ao cadastrar, revise o formulário")
+    }
+
+
+
+  }
+
+  return (
     <>
       <Head>
-        <title>Novo produto - Sujeito Pizzaria</title>
+        <title>Novo produto </title>
       </Head>
       <div>
-        <Header/>
+        <Header />
 
         <main className={styles.container}>
           <h1>Novo produto</h1>
 
-          <form className={styles.form}>
+          <form className={styles.form} onSubmit={handleRegister}>
 
             <label className={styles.labelAvatar}>
               <span>
@@ -56,48 +121,56 @@ export default function Product(){
 
               <input type="file" accept="image/png, image/jpeg" onChange={handleFile} />
 
-              {avatarUrl && (     
-                  <img 
-                    className={styles.preview}
-                    src={avatarUrl}
-                    alt="Foto do produto" 
-                    width={250}
-                    height={250}
-                  />
+              {avatarUrl && (
+                <img
+                  className={styles.preview}
+                  src={avatarUrl}
+                  alt="Foto do produto"
+                  width={250}
+                  height={250}
+                />
               )}
 
             </label>
 
 
-            <select>
-              <option>
-                Bebida
-              </option>
-              <option>
-                Pizzas
-              </option>
+            <select value={categorySelected} onChange={handleChangeCategory}>
+              {categories.map((item, index) => {
+                return (
+                  <option key={item.id} value={index}>
+                    {item.name}
+                  </option>
+                )
+
+              })}
             </select>
 
-            <input 
-            type="text"
-            placeholder="Digite o nome do produto"
-            className={styles.input}
+            <input
+              type="text"
+              placeholder="Digite o nome do produto"
+              className={styles.input}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
 
-            <input 
-            type="text"
-            placeholder="Preço do produto"
-            className={styles.input}
-            />      
+            <input
+              type="text"
+              placeholder="Preço do produto"
+              className={styles.input}
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
 
-            <textarea 
+            <textarea
               placeholder="Descreva seu produto..."
               className={styles.input}
-            /> 
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
 
             <button className={styles.buttonAdd} type="submit">
-              Cadastrar  
-            </button>   
+              Cadastrar
+            </button>
 
           </form>
 
@@ -109,8 +182,14 @@ export default function Product(){
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx) => {
+  const apliClient = setupAPIClient(ctx)
+
+  const response = await apliClient.get('/category');
+  //console.log(response.data);
 
   return {
-    props: {}
+    props: {
+      categoryList: response.data
+    }
   }
 })
