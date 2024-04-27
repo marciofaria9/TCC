@@ -20,7 +20,6 @@ interface CategoryProps {
 }
 
 
-
 export default function Product({ categoryList }: CategoryProps) {
 
   const [name, setName] = useState('');
@@ -96,7 +95,6 @@ export default function Product({ categoryList }: CategoryProps) {
       console.log(err);
       toast.error("Erro ao cadastrar, revise o formulário")
     }
-
 
 
   }
