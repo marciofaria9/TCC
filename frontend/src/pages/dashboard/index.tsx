@@ -1,81 +1,130 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import { canSSRAuth } from '../../utils/canSSRAuth'
 import Head from 'next/head';
 import styles from './styles.module.scss';
 import { Header } from '../../components/Header'
 import { FiRefreshCcw } from 'react-icons/fi'
-import { setupAPIClient } from '@/services/api';
-
+import { setupAPIClient } from '../../services/api'
+import { ModalOrder } from '../../components/ModalOrder'
+import Modal from 'react-modal';
 
 type OrderProps = {
+  id: string;
+  table: string | number;
+  status: boolean;
+  draft: boolean;
+  name: string | null;
+}
+
+interface HomeProps{
+  orders: OrderProps[];
+}
+
+export type OrderItemProps = {
+  id: string;
+  amount: number;
+  order_id: string;
+  product_id: string;
+  product:{
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    banner: string;
+  }
+  order:{
     id: string;
     table: string | number;
     status: boolean;
-    name: string | null
-
+    name: string | null;
+  }
 }
 
-interface HomeProps {
-    orders: OrderProps[];
+export default function Dashboard({ orders }: HomeProps){
 
-}
+  const [orderList, setOrderList] = useState(orders || [])
 
-
-export default function Dashboard({ orders }: HomeProps) {
-
-    const [orderList, setOrderList] = useState(orders || [])
-    function handleOpenModalView(id: string) {
-        alert("Id clicado " + id)
-    }
+  const [modalItem, setModalItem] = useState<OrderItemProps[]>([])
+  const [modalVisible, setModalVisible] = useState(false);
 
 
-    return (
-        <>
-            <Head>
-                <title>Home - Pizzaria</title>
-            </Head>
-            <div>
-                <Header />
+  function handleCloseModal(){
+    setModalVisible(false);
+  }
 
-                <main className={styles.container}>
+  async function handleOpenModalView(id: string){
+   
+     const apiClient = setupAPIClient(); 
 
-                    <div className={styles.containerHeader}>
-                        <h1>Últimos pedidos</h1>
-                        <button>
-                            <FiRefreshCcw size={25} color="#3fffa3" />
-                        </button>
-                    </div>
+     const response = await apiClient.get('/order/detail', {
+       params:{
+        order_id: id,
+       } 
+     })
 
-                    <article className={styles.listOrders}>
+     setModalItem(response.data);
+     setModalVisible(true);
 
-                        {orderList.map(item => (
-                            <section key={item.id} className={styles.orderItem}>
-                                <button onClick={() => handleOpenModalView(item.id)}>
-                                    <div className={styles.tag}></div>
-                                    <span>Mesa {item.table}</span>
-                                </button>
-                            </section>
-                        ))}
+  }
 
-                    </article>
 
-                </main>
+  Modal.setAppElement('#__next');
 
-            </div>
-        </>
-    )
+  return(
+    <>
+    <Head>
+      <title>Painel - Sujeito Pizzaria</title>
+    </Head>
+    <div>
+      <Header/>
+    
+      <main className={styles.container}>
+
+        <div className={styles.containerHeader}>
+          <h1>Últimos pedidos</h1>
+          <button>
+            <FiRefreshCcw size={25} color="#3fffa3"/>
+          </button>
+        </div>
+
+        <article className={styles.listOreders}>
+
+          {orderList.map( item => (
+            <section  key={item.id} className={styles.orderItem}> 
+              <button onClick={ () => handleOpenModalView(item.id) }>
+                <div className={styles.tag}></div>
+                <span>Mesa {item.table}</span>
+              </button>
+            </section>
+          ))}
+                 
+        </article>
+
+      </main>
+
+      { modalVisible && (
+        <ModalOrder
+          isOpen={modalVisible}
+          onRequestClose={handleCloseModal}
+          order={modalItem}
+        />
+      )}
+
+    </div>
+    </>
+  )
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx) => {
+  const apiClient = setupAPIClient(ctx);
 
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get('/orders')
+  const response = await apiClient.get('/orders');
+  //console.log(response.data);
 
-    // console.log(response.data);
 
-    return {
-        props: {
-            orders: response.data
-        }
+  return {
+    props: {
+      orders: response.data
     }
+  }
 })
