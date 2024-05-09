@@ -6,7 +6,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Pressable
 } from 'react-native'
 
 import { AuthContext } from '../../contexts/AuthContext'
@@ -55,13 +56,13 @@ export default function SignIn(){
           onChangeText={setPassword}          
         />     
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Pressable style={styles.button} onPress={handleLogin}>
           { loadingAuth ? (
             <ActivityIndicator size={25} color="#FFF"/>
           ) : (
             <Text style={styles.buttonText}>Acessar</Text>
           )}
-        </TouchableOpacity>   
+        </Pressable>   
       </View>
 
     </View>

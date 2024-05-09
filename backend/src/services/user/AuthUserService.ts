@@ -43,7 +43,7 @@ class AuthUserService {
             //signature
             {
                 subject: user.id,
-                expiresIn: '30d'
+                expiresIn: '30m'
             }
         )
 

@@ -10,7 +10,10 @@ function AuthRoutes() {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name="SignIn" component={SigIn} options={{ headerShown: false }} />
+            <Stack.Screen name="SignIn" 
+            component={SigIn} 
+            options={{ headerShown: false }} 
+            />
         </Stack.Navigator>
     )
 }
