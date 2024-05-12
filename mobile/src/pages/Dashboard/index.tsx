@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TextInput, StyleSheet, Pressable } from 'react-native'
+import { Text, SafeAreaView, TextInput, StyleSheet, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import { StackPramsList } from '../../routes/app.routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+
+
 export default function Dashboard() {
+
 
   const navigation = useNavigation<NativeStackNavigationProp<StackPramsList>>()
 
@@ -39,6 +42,8 @@ export default function Dashboard() {
       <Pressable style={styles.button} onPress={openOrder}>
         <Text style={styles.buttonText}>Abrir mesa</Text>
       </Pressable>
+   
+  
 
     </SafeAreaView>
   )
