@@ -1,42 +1,43 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Dashboard from '../pages/Dashboard';
+import Order from '../pages/Order'
 
+//Para users logados
 
-import Dashboard from "../pages/Dashboard";
-import Order from "../pages/Order";
-//Para usuários logados
 
 export type StackPramsList = {
-    Dashboard: undefined;
-    Order: {
-        number: number | string;
-        order_id: string
+  Dashboard: undefined;
+  Order: {
+    number: number | string;
+    order_id: string;
+  };
 
-    }
-}
+};
 
-
+export type DashPramsList = {
+  Dashboard: undefined;
+};
 
 const Stack = createNativeStackNavigator<StackPramsList>();
 
-function AppRoutes() {
+function AppRoutes(){
+  return(
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Dashboard" 
+        component={Dashboard} 
+        options={{ headerShown: false }}
+      />
 
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="Dashboard"
-                component={Dashboard}
-                options={{ headerShown: false }}
-            />
-
-            <Stack.Screen
-                name="Order"
-                component={Order}
-                options={{ headerShown: false }}
-            />
-        </Stack.Navigator>
-    )
+      <Stack.Screen
+        name="Order"
+        component={Order}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  )
 }
 
-
 export default AppRoutes;
+

@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Text, SafeAreaView, TextInput, StyleSheet, Pressable } from 'react-native'
+import React, { useState, useContext } from 'react';
+import { Text, SafeAreaView, TextInput, StyleSheet, Pressable, Button } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import { StackPramsList } from '../../routes/app.routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-
+import { api } from '../../services/api';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Dashboard() {
+  const { signOut } = useContext(AuthContext)
 
 
   const navigation = useNavigation<NativeStackNavigationProp<StackPramsList>>()
@@ -21,9 +22,15 @@ export default function Dashboard() {
       return;
     }
 
-    navigation.navigate('Order', { 
-      number: number, 
-      order_id: '0765a032-e0cd-4206-9204-e6ecd9822ea0'})
+
+
+    const response = await api.post('/order', {
+      table: Number(number)
+    })
+
+    // console.log(response.data)
+    navigation.navigate('Order', { number: number, order_id: response.data.id })
+    setNumber('')
   }
 
   return (
@@ -42,8 +49,10 @@ export default function Dashboard() {
       <Pressable style={styles.button} onPress={openOrder}>
         <Text style={styles.buttonText}>Abrir mesa</Text>
       </Pressable>
-   
-  
+
+      <Pressable style={styles.buttonLogOut} onPress={signOut}>
+        <Text style={styles.textLogOut}>Sair</Text>
+      </Pressable>
 
     </SafeAreaView>
   )
@@ -86,5 +95,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#101026',
     fontWeight: 'bold'
+  },
+  buttonLogOut: {
+    position: 'absolute',
+    bottom: '5%',
+    width: '90%',
+    height: 40,
+    backgroundColor: '#FF3E4D',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  textLogOut: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#FFF'
   }
+
 })

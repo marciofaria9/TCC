@@ -44,18 +44,17 @@ export function AuthProvider({children}: AuthProviderProps){
   const [loadingAuth, setLoadingAuth] = useState(false)
   const [loading, setLoading] = useState(true);
 
-//se estiver usuário logado terá user.name
+  //se estiver usuário logado terá user.name
   const isAuthenticated = !!user.name; 
 
   useEffect(() => {
 
     async function getUser(){
-
       //Pegar os dados salvos do user
       const userInfo = await AsyncStorage.getItem('@sujeitopizzaria');
       let hasUser: UserProps = JSON.parse(userInfo || '{}')
 
-      // Verificar se recebeu as informaçoes dele
+      // Verificar se recebemos as informaçoes dele.
       if(Object.keys(hasUser).length > 0){
         api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`
 
@@ -86,7 +85,7 @@ export function AuthProvider({children}: AuthProviderProps){
         email,
         password
       })
-      
+      //console.log(response.data);
 
       const { id, name, token } = response.data;
 
