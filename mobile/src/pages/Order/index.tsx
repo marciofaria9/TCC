@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Modal } from 'react-native'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { api } from '../../services/api';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DashPramsList } from '../../routes/app.routes';
+import { ModalPicker } from '../../components/ModalPicker';
 
 type RouteDetailParams = {
     Order: {
@@ -18,7 +19,7 @@ type RouteDetailParams = {
 
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>;
 
-type CategoryProps = {
+export type CategoryProps = {
     id: string;
     name: string;
 }
@@ -31,6 +32,7 @@ export default function Order() {
 
     const [category, setCategory] = useState<CategoryProps[] | []>([])
     const [categorySelected, setCategorySelected] = useState<CategoryProps>()
+    const [modalCategoryVisible, setModalCategoryVisible] = useState(false)
 
     const [amount, setAmount] = useState('1')
 
@@ -55,7 +57,7 @@ export default function Order() {
                 }
             })
 
-            alert("Mesa exluída com sucesso")
+            alert("Mesa excluída com sucesso")
             navigation.navigate('Dashboard')
 
         } catch (err) {
@@ -65,6 +67,9 @@ export default function Order() {
         }
     }
 
+    function handleChangeCategory(item: CategoryProps){
+        setCategorySelected(item);
+      }
 
     return (
 
@@ -78,7 +83,7 @@ export default function Order() {
             </View>
 
             {category.length !== 0 && (
-                <Pressable style={styles.input}>
+                <Pressable style={styles.input} onPress={() => setModalCategoryVisible(true)}>
                     <Text style={{ color: '#FFF' }}>
                         {categorySelected?.name}
                     </Text>
@@ -109,8 +114,24 @@ export default function Order() {
                     <Text style={styles.buttonText}>Avançar</Text>
                 </Pressable>
             </View>
-        </View>
 
+
+            <Modal
+                transparent={true}
+                visible={modalCategoryVisible}
+                animationType="fade"
+            >
+
+                <ModalPicker
+                    handleCloseModal={() => setModalCategoryVisible(false)}
+                    options={category}
+                    selectedItem={handleChangeCategory}
+                />
+
+            </Modal>
+
+
+        </View>
 
 
     )
