@@ -1,28 +1,21 @@
-import { empty } from "@prisma/client/runtime/library";
 import prismaClient from "../../prisma";
 
-
-interface ProductRequest {
+interface ProductRequest{
     category_id: string;
-}
-
-
-class ListByCategoryService {
-    async execute({ category_id }: ProductRequest) {
-
-
-        if (!category_id) {
-            throw new Error('No cateogry informed')
+  }
+  
+  class ListByCategoryService{
+    async execute({ category_id }: ProductRequest){
+      
+      const findByCategory = await prismaClient.product.findMany({
+        where:{
+          category_id: category_id
         }
-
-        const findByCategory = await prismaClient.product.findMany({
-            where: {
-                category_id: category_id // igual a categoria recebida como parametro
-            }
-
-        })
-        return findByCategory;
+      })
+  
+      return findByCategory;
+  
     }
-}
-
-export { ListByCategoryService }
+  }
+  
+  export { ListByCategoryService }

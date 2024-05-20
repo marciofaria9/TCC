@@ -24,15 +24,23 @@ export type CategoryProps = {
     name: string;
 }
 
+type ProductProps = {
+    id: string;
+    name: string;
+}
 
 export default function Order() {
 
     const route = useRoute<OrderRouteProps>()
     const navigation = useNavigation<NativeStackNavigationProp<DashPramsList>>()
 
-    const [category, setCategory] = useState<CategoryProps[] | []>([])
+    const [category, setCategory] = useState<CategoryProps[] | []>([]);
     const [categorySelected, setCategorySelected] = useState<CategoryProps>()
     const [modalCategoryVisible, setModalCategoryVisible] = useState(false)
+
+    const [products, setProducts] = useState<ProductProps[] | []>([]);
+    const [productSelected, setProductSelected] = useState<ProductProps | undefined>()
+    const [modalProductVisible, setModalProductVisible] = useState(false);
 
     const [amount, setAmount] = useState('1')
 
@@ -40,12 +48,32 @@ export default function Order() {
         async function loadInfo() {
             const response = await api.get('/category')
 
-            setCategory(response.data)
+            setCategory(response.data);
             setCategorySelected(response.data[0])
+
         }
 
         loadInfo();
     }, [])
+
+    useEffect(() => {
+
+        async function loadProducts() {
+            const response = await api.get('/category/product', {
+                params: {
+                    category_id: categorySelected?.id
+                }
+            })
+
+            setProducts(response.data);
+            setProductSelected(response.data[0])
+
+           
+        }
+
+        loadProducts();
+
+    }, [categorySelected])
 
     async function handleCloseOrder() {
 
@@ -67,9 +95,9 @@ export default function Order() {
         }
     }
 
-    function handleChangeCategory(item: CategoryProps){
+    function handleChangeCategory(item: CategoryProps) {
         setCategorySelected(item);
-      }
+    }
 
     return (
 
@@ -90,9 +118,15 @@ export default function Order() {
                 </Pressable>
             )}
 
-            <Pressable style={styles.input}>
-                <Text style={{ color: '#FFF' }}>pizza de Calabreso</Text>
-            </Pressable>
+
+            {products.length !== 0 && (
+                <Pressable style={styles.input} onPress={() => setModalProductVisible(true)} >
+                    <Text style={{ color: '#FFF' }}>
+                        {productSelected?.name}
+                    </Text>
+                </Pressable>
+            )}
+
 
             <View style={styles.qtdContainer} >
                 <Text style={styles.qtdText}>Quantidade</Text>
