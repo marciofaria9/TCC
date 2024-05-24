@@ -1,5 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { Text, SafeAreaView, TextInput, StyleSheet, Pressable, Button } from 'react-native'
+import {
+  Text, SafeAreaView, TextInput, StyleSheet, Pressable,
+  Button
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import { StackPramsList } from '../../routes/app.routes';
@@ -22,19 +25,17 @@ export default function Dashboard() {
       return;
     }
 
-
-
     const response = await api.post('/order', {
       table: Number(number)
     })
 
-    // console.log(response.data)
     navigation.navigate('Order', { number: number, order_id: response.data.id })
     setNumber('')
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+
+    <SafeAreaView style={styles.container} >
       <Text style={styles.title}>Novo pedido</Text>
 
       <TextInput
@@ -55,7 +56,8 @@ export default function Dashboard() {
       </Pressable>
 
     </SafeAreaView>
-  )
+  );
+
 }
 
 const styles = StyleSheet.create({

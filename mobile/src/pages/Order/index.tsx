@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, Modal } from 'react-native'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
-import { Feather } from '@expo/vector-icons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { api } from '../../services/api';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DashPramsList } from '../../routes/app.routes';
 import { ModalPicker } from '../../components/ModalPicker';
+import { ListItem } from '../../components/ListItem';
+import { FlatList } from 'react-native';
 
 type RouteDetailParams = {
     Order: {
@@ -29,6 +30,14 @@ type ProductProps = {
     name: string;
 }
 
+type ItemProps = {
+    id: string;
+    product_id: string;
+    name: string;
+    amount: string | number;
+
+}
+
 export default function Order() {
 
     const route = useRoute<OrderRouteProps>()
@@ -43,6 +52,7 @@ export default function Order() {
     const [modalProductVisible, setModalProductVisible] = useState(false);
 
     const [amount, setAmount] = useState('1')
+    const [items, setItems] = useState<ItemProps[]>([])
 
     useEffect(() => {
         async function loadInfo() {
@@ -68,7 +78,6 @@ export default function Order() {
             setProducts(response.data);
             setProductSelected(response.data[0])
 
-           
         }
 
         loadProducts();
@@ -99,15 +108,41 @@ export default function Order() {
         setCategorySelected(item);
     }
 
+    function handleChangeProduct(item: ProductProps) {
+        setProductSelected(item)
+    }
+
+    async function handleAddItem() {
+        const response = await api.post('/order/add', {
+            order_id: route.params?.order_id,
+            product_id: productSelected?.id,
+            amount: Number(amount)
+        })
+
+        let data = {
+            id: response.data.id,
+            product_id: productSelected?.id as string,
+            name: productSelected?.name as string,
+            amount: amount
+        }
+
+        setItems(oldArray => [...oldArray, data])
+
+
+
+    }
+
     return (
 
         <View style={styles.container}>
 
             <View style={styles.header}>
                 <Text style={styles.title} >Mesa {route.params.number}</Text>
-                <Pressable onPress={handleCloseOrder}>
-                    <MaterialCommunityIcons name="delete-outline" size={28} color="#FF3f4b" />
-                </Pressable>
+                {items.length === 0 && (
+                    <Pressable onPress={handleCloseOrder}>
+                        <MaterialCommunityIcons name="delete-outline" size={28} color="#FF3f4b" />
+                    </Pressable>
+                )}
             </View>
 
             {category.length !== 0 && (
@@ -140,14 +175,26 @@ export default function Order() {
             </View>
 
             <View style={styles.actions}>
-                <Pressable style={styles.buttonAdd}>
+                <Pressable style={styles.buttonAdd} onPress={handleAddItem}>
                     <Text style={styles.buttonText}>+</Text>
                 </Pressable>
 
-                <Pressable style={styles.button}>
+                <Pressable
+                    style={[styles.button, { opacity: items.length === 0 ? 0.3 : 1 }]}
+                    disabled={items.length === 0}
+                >
                     <Text style={styles.buttonText}>Avançar</Text>
                 </Pressable>
             </View>
+
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{ flex: 1, marginTop: 24 }}
+                data={items}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <ListItem data={item} />}
+            />
+
 
 
             <Modal
@@ -164,9 +211,21 @@ export default function Order() {
 
             </Modal>
 
+            <Modal
+                transparent={true}
+                visible={modalProductVisible}
+                animationType="fade"
+            >
+
+                <ModalPicker
+                    handleCloseModal={() => setModalProductVisible(false)}
+                    options={products}
+                    selectedItem={handleChangeProduct}
+                />
+
+            </Modal>
 
         </View>
-
 
     )
 }
