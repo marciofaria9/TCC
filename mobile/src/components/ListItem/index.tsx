@@ -3,21 +3,28 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 interface ItemProps {
-    data:{
-      id: string;
-      product_id: string;
-      name: string;
-      amount: string | number;
+    data: {
+        id: string;
+        product_id: string;
+        name: string;
+        amount: string | number;
     }
-  }
 
-export function ListItem({data}: ItemProps) {
+    deleteItem: (item_id: string, item_nome: string) => void
+}
+
+export function ListItem({ data, deleteItem }: ItemProps) {
+
+    function handleDeleteItem() {
+        deleteItem(data.id, data.name)
+
+    }
 
     return (
         <View style={styles.container}>
             <Text style={styles.item}>{data.amount} - {data.name}</Text>
 
-            <Pressable>
+            <Pressable onPress={handleDeleteItem}>
                 <Feather name="trash-2" color="#FF3F4B" size={25} />
             </Pressable>
         </View>
@@ -39,8 +46,8 @@ const styles = StyleSheet.create({
         borderColor: '#8a8a8a'
     },
     item: {
-        color: '#FFF', 
+        color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 22
     }
 })

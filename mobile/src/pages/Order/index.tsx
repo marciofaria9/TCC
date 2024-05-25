@@ -4,10 +4,12 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { api } from '../../services/api';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DashPramsList } from '../../routes/app.routes';
 import { ModalPicker } from '../../components/ModalPicker';
 import { ListItem } from '../../components/ListItem';
-import { FlatList } from 'react-native';
+import { FlatList } from 'react-native'; 7
+import { StackPramsList } from '../../routes/app.routes';
+
+
 
 type RouteDetailParams = {
     Order: {
@@ -41,7 +43,7 @@ type ItemProps = {
 export default function Order() {
 
     const route = useRoute<OrderRouteProps>()
-    const navigation = useNavigation<NativeStackNavigationProp<DashPramsList>>()
+    const navigation = useNavigation<NativeStackNavigationProp<StackPramsList>>()
 
     const [category, setCategory] = useState<CategoryProps[] | []>([]);
     const [categorySelected, setCategorySelected] = useState<CategoryProps>()
@@ -95,7 +97,7 @@ export default function Order() {
             })
 
             alert("Mesa excluída com sucesso")
-            navigation.navigate('Dashboard')
+            navigation.goBack()
 
         } catch (err) {
             console.log(err)
@@ -128,8 +130,27 @@ export default function Order() {
 
         setItems(oldArray => [...oldArray, data])
 
+    }
 
+    async function handleDeleteItem(item_id: string, item_nome: string) {
+        await api.delete('/order/remove', {
+            params: {
+                item_id: item_id
+            }
+        })
 
+        alert(`${item_nome} excluído com sucesso`)
+
+        //revmover da lista de items
+        let removeItem = items.filter(item => {
+            return (item.id !== item_id) //devolve items diferentes do passado
+        })
+
+        setItems(removeItem)
+    }
+
+    function handleFinishOrder() {
+        navigation.navigate("FinishOrder")
     }
 
     return (
@@ -182,6 +203,7 @@ export default function Order() {
                 <Pressable
                     style={[styles.button, { opacity: items.length === 0 ? 0.3 : 1 }]}
                     disabled={items.length === 0}
+                    onPress={handleFinishOrder}
                 >
                     <Text style={styles.buttonText}>Avançar</Text>
                 </Pressable>
@@ -192,7 +214,7 @@ export default function Order() {
                 style={{ flex: 1, marginTop: 24 }}
                 data={items}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <ListItem data={item} />}
+                renderItem={({ item }) => <ListItem data={item} deleteItem={handleDeleteItem} />}
             />
 
 
