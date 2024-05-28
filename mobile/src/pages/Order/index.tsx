@@ -86,6 +86,8 @@ export default function Order() {
 
     }, [categorySelected])
 
+
+     //deletar a mesa
     async function handleCloseOrder() {
 
         try {
@@ -110,10 +112,13 @@ export default function Order() {
         setCategorySelected(item);
     }
 
+
     function handleChangeProduct(item: ProductProps) {
         setProductSelected(item)
     }
 
+
+    //adicionar item ao pedido
     async function handleAddItem() {
         const response = await api.post('/order/add', {
             order_id: route.params?.order_id,
@@ -132,6 +137,9 @@ export default function Order() {
 
     }
 
+
+
+    //remover items do pedido
     async function handleDeleteItem(item_id: string, item_nome: string) {
         await api.delete('/order/remove', {
             params: {
@@ -143,14 +151,18 @@ export default function Order() {
 
         //revmover da lista de items
         let removeItem = items.filter(item => {
-            return (item.id !== item_id) //devolve items diferentes do passado
+            return (item.id !== item_id) //devolve items diferentes do id que foi passado
         })
 
         setItems(removeItem)
     }
 
+    //enviar pedido para cozinha
     function handleFinishOrder() {
-        navigation.navigate("FinishOrder")
+        navigation.navigate("FinishOrder", {
+            number: route.params?.number,
+            order_id: route.params?.order_id
+        })
     }
 
     return (
