@@ -52,7 +52,10 @@ export default function Dashboard({ orders }: HomeProps) {
   function handleCloseModal() {
     setModalVisible(false);
   }
+ 
 
+
+  //abrir o modal
   async function handleOpenModalView(id: string) {
 
     const apiClient = setupAPIClient();
@@ -84,7 +87,7 @@ export default function Dashboard({ orders }: HomeProps) {
 
   }
   
-  //botão refresh
+  //atualizar os pedidos na tela
   async function hadleRefreshOrders() {
     const apiClient = setupAPIClient();
     const response = await apiClient.get('/orders')
@@ -121,12 +124,13 @@ export default function Dashboard({ orders }: HomeProps) {
 
             {orderList.length === 0 && (
               <span className={styles.emptylist}>
-                Não tem nenhum pedido aberto
+                Não foi encontrado nenhum pedido aberto
               </span>
             )}
-
+             
+           
             {orderList.map(item => (
-              <section key={item.id} className={styles.orderItem}> /
+              <section key={item.id} className={styles.orderItem}>          
                 <button onClick={() => handleOpenModalView(item.id)}>
                   <div className={styles.tag}></div>
                   <span>Mesa {item.table}</span>
