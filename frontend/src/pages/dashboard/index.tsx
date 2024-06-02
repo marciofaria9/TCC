@@ -54,7 +54,6 @@ export default function Dashboard({ orders }: HomeProps) {
   }
  
 
-
   //abrir o modal
   async function handleOpenModalView(id: string) {
 

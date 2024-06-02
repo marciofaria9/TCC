@@ -9,8 +9,6 @@ import { ListItem } from '../../components/ListItem';
 import { FlatList } from 'react-native'; 7
 import { StackPramsList } from '../../routes/app.routes';
 
-
-
 type RouteDetailParams = {
     Order: {
 
