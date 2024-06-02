@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
     item: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 22
+        fontSize: 18
     }
 })

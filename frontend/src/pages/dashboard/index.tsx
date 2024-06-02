@@ -9,6 +9,7 @@ import { ModalOrder } from '../../components/ModalOrder'
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 
+
 type OrderProps = {
   id: string;
   table: string | number;
@@ -44,11 +45,8 @@ export type OrderItemProps = {
 export default function Dashboard({ orders }: HomeProps) {
 
   const [orderList, setOrderList] = useState(orders || [])
-
   const [modalItem, setModalItem] = useState<OrderItemProps[]>([])
   const [modalVisible, setModalVisible] = useState(false);
-
-
 
 
   function handleCloseModal() {
@@ -90,7 +88,12 @@ export default function Dashboard({ orders }: HomeProps) {
   async function hadleRefreshOrders() {
     const apiClient = setupAPIClient();
     const response = await apiClient.get('/orders')
+    if (response.data.length > orderList.length) {
+     
 
+      const newOrdersCount = response.data.length - orderList.length;
+      toast.success(`Você tem ${newOrdersCount} novo(s) pedido(s)!`);
+    }
     setOrderList(response.data);
 
   }
@@ -151,9 +154,7 @@ export default function Dashboard({ orders }: HomeProps) {
 
 export const getServerSideProps = canSSRAuth(async (ctx) => {
   const apiClient = setupAPIClient(ctx);
-
   const response = await apiClient.get('/orders');
-
 
 
   return {

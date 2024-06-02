@@ -9,7 +9,7 @@ import { FiUpload } from 'react-icons/fi'
 import { toast } from 'react-toastify';
 
 
-//tipando a categoria para a lista
+
 type ItemProps = {
   id: string;
   name: string;
@@ -183,7 +183,7 @@ export const getServerSideProps = canSSRAuth(async (ctx) => {
   const apliClient = setupAPIClient(ctx)
 
   const response = await apliClient.get('/category');
-  //console.log(response.data);
+  
 
   return {
     props: {
