@@ -27,6 +27,7 @@ export type OrderItemProps = {
   amount: number;
   order_id: string;
   product_id: string;
+  observation: string | null;
   product: {
     id: string;
     name: string;

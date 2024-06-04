@@ -1,8 +1,6 @@
 import Modal from 'react-modal';
 import styles from './styles.module.scss';
-
 import { FiX } from 'react-icons/fi'
-
 import { OrderItemProps } from '../../pages/dashboard'
 
 interface ModalOrderProps {
@@ -55,6 +53,11 @@ export function ModalOrder({ isOpen, onRequestClose, order, handleFinishOrder }:
             <span className={styles.description}>
               {item.product.description}
             </span>
+            {item.observation && (
+              <span className={styles.observation}>
+                Obs: {item.observation}
+              </span>
+            )}
             <span className={styles.price}>
               Valor R$: {parseFloat(item.product.price) * item.amount}
             </span>

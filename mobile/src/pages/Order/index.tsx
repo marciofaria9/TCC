@@ -35,6 +35,7 @@ type ItemProps = {
     product_id: string;
     name: string;
     amount: string | number;
+    observation: string;
 
 }
 
@@ -51,9 +52,13 @@ export default function Order() {
     const [productSelected, setProductSelected] = useState<ProductProps | undefined>()
     const [modalProductVisible, setModalProductVisible] = useState(false);
 
+
     const [amount, setAmount] = useState('1')
     const [items, setItems] = useState<ItemProps[]>([])
+    const [observation, setObservation] = useState('')
 
+
+    //carregar categorias
     useEffect(() => {
         async function loadInfo() {
             const response = await api.get('/category')
@@ -66,6 +71,8 @@ export default function Order() {
         loadInfo();
     }, [])
 
+
+    //carregar produtos da categoria
     useEffect(() => {
 
         async function loadProducts() {
@@ -85,7 +92,7 @@ export default function Order() {
     }, [categorySelected])
 
 
-     //deletar a mesa
+    //deletar a mesa
     async function handleCloseOrder() {
 
         try {
@@ -121,18 +128,21 @@ export default function Order() {
         const response = await api.post('/order/add', {
             order_id: route.params?.order_id,
             product_id: productSelected?.id,
-            amount: Number(amount)
+            amount: Number(amount),
+            observation: observation
         })
 
         let data = {
             id: response.data.id,
             product_id: productSelected?.id as string,
             name: productSelected?.name as string,
-            amount: amount
+            amount: amount,
+            observation: observation
+
         }
 
         setItems(oldArray => [...oldArray, data])
-
+        setObservation('')
     }
 
 
@@ -193,6 +203,16 @@ export default function Order() {
                 </Pressable>
             )}
 
+                <View>
+                    <TextInput
+                        placeholder="Observação"
+                        style={styles.input}
+                        placeholderTextColor="#F0F0F0"
+                        value={observation}
+                        onChangeText={setObservation}
+                    />
+                </View>
+
 
             <View style={styles.qtdContainer} >
                 <Text style={styles.qtdText}>Quantidade</Text>
@@ -204,6 +224,7 @@ export default function Order() {
                     onChangeText={setAmount}
                 />
             </View>
+
 
             <View style={styles.actions}>
                 <Pressable style={styles.buttonAdd} onPress={handleAddItem}>
@@ -291,7 +312,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 8,
         color: '#FFF',
-        fontSize: 20,
+        fontSize: 14
     },
     qtdContainer: {
         flexDirection: 'row',
