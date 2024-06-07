@@ -18,7 +18,6 @@ type RouteDetailParams = {
   type FinishOrderRouteProp = RouteProp<RouteDetailParams, 'FinishOrder'>
 
 
-
 export default function FinishOrder() {
     
     const route = useRoute<FinishOrderRouteProp>();
@@ -41,7 +40,7 @@ export default function FinishOrder() {
     
     return (
         <View style={styles.container}>
-            <Text style={styles.alert}> Desaja finalizar esse pedido? </Text>
+            <Text style={styles.alert}> Deseja finalizar esse pedido? </Text>
             <Text style={styles.title}> Mesa {route.params?.number} </Text>
 
             <Pressable style={styles.button} onPress={handleSendOrder}>
