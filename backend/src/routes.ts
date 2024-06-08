@@ -1,13 +1,19 @@
 import { Router } from 'express';
 import multer from 'multer';
 
+//user
 import { CreateUserController } from './controllers/user/CreateUserController'
 import { AuthUserController } from './controllers/user/AuthUserController'
 import { DetailUserController } from './controllers/user/DetailUserController'
+
+//cateegory
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
+
+//product
 import { CreateProductController } from './controllers/product/CreateProductController'
 import { ListByCategoryController } from './controllers/product/ListByCategoryController';
+
 import { CreateOrderController } from './controllers/Order/CreateOrderController';
 import { RemoveOrderController } from './controllers/Order/RemoveOrderController';
 import { AddItemController } from './controllers/Order/AddItemController';
@@ -16,6 +22,8 @@ import { SendOrderController } from './controllers/Order/SendOrderController';
 import { ListOrderController } from './controllers/Order/ListOrderController';
 import { DetailOrderCrontroller } from './controllers/Order/DetailOrderCrontroller';
 import { FinishOrderController } from './controllers/Order/FinishOrderController'
+
+import { ListTodayOrdersController } from './controllers/results/ListTodayordersController';
 
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
@@ -47,6 +55,9 @@ router.put('/order/send', isAuthenticated, new SendOrderController().handle)
 router.get('/orders', isAuthenticated, new ListOrderController().handle)
 router.get('/order/detail', isAuthenticated, new DetailOrderCrontroller().handle)
 router.put('/order/finish', isAuthenticated, new FinishOrderController().handle )
+
+//RESULTS
+router.get('/order/today', isAuthenticated, new ListTodayOrdersController().handle)
 
 
 export { router }; 
