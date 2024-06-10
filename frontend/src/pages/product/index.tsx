@@ -1,11 +1,9 @@
-
 import { canSSRAuth } from '../../utils/canSSRAuth';
 import { setupAPIClient } from '../../services/api';
 import { useState, ChangeEvent, FormEvent } from 'react'
 import Head from 'next/head';
 import styles from './styles.module.scss';
 import { Header } from '../../components/Header'
-import { FiUpload } from 'react-icons/fi'
 import { toast } from 'react-toastify';
 
 
@@ -26,33 +24,9 @@ export default function Product({ categoryList }: CategoryProps) {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
 
-
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [imageAvatar, setImageAvatar] = useState<File | null>(null);
   const [categories, setCategories] = useState(categoryList || []);
   const [categorySelected, setCategorySelected] = useState(0);
 
-
-  function handleFile(e: ChangeEvent<HTMLInputElement>) {
-
-    if (!e.target.files) {
-      return;
-    }
-
-    const image = e.target.files[0];
-
-    if (!image) {
-      return;
-    }
-
-    if (image.type === 'image/jpeg' || image.type === 'image/png') {
-
-      setImageAvatar(image);
-      setAvatarUrl(URL.createObjectURL(e.target.files[0]))
-
-    }
-
-  }
 
   //quando seleciana uma nova categoria na lista
   function handleChangeCategory(e: ChangeEvent<HTMLSelectElement>) {
@@ -67,8 +41,8 @@ export default function Product({ categoryList }: CategoryProps) {
 
     try {
       const data = new FormData();
-      if (name === '' || price === '' || description === '' || imageAvatar === null) {
-        toast.error("Preencha todos os campo")
+      if (name === '' || price === '' || description === '') {
+        toast.error("Preencha todos os campos")
         return;
       }
 
@@ -76,9 +50,9 @@ export default function Product({ categoryList }: CategoryProps) {
       data.append('price', price)
       data.append('description', description)
       data.append('category_id', categories[categorySelected].id)
-      data.append('file', imageAvatar)
-
-      console.log(data)
+      data.append('banner', 'null');
+      
+ 
 
       const apliClient = setupAPIClient();
       await apliClient.post('/product', data)
@@ -88,8 +62,7 @@ export default function Product({ categoryList }: CategoryProps) {
       setName('')
       setPrice('')
       setDescription('')
-      setImageAvatar(null)
-      setAvatarUrl('')
+    
 
     } catch (err) {
       console.log(err);
@@ -111,26 +84,6 @@ export default function Product({ categoryList }: CategoryProps) {
           <h1>Novo produto</h1>
 
           <form className={styles.form} onSubmit={handleRegister}>
-
-            <label className={styles.labelAvatar}>
-              <span>
-                <FiUpload size={30} color="#FFF" />
-              </span>
-
-              <input type="file" accept="image/png, image/jpeg" onChange={handleFile} />
-
-              {avatarUrl && (
-                <img
-                  className={styles.preview}
-                  src={avatarUrl}
-                  alt="Foto do produto"
-                  width={250}
-                  height={250}
-                />
-              )}
-
-            </label>
-
 
             <select value={categorySelected} onChange={handleChangeCategory}>
               {categories.map((item, index) => {

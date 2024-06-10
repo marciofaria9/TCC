@@ -1,0 +1,31 @@
+
+.container {
+  max-width: 720px;
+  margin: 4rem auto; 
+  padding: 0 2rem;
+
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    color: var(--white);
+    margin-bottom: 50px;
+  }
+}
+  
+  .chartContainer {
+    width: 400px; 
+    height: 400px; 
+}
+
+.totalItems {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: var(--white);
+}
+
+.totalItemsValue {
+  color: #3fffa3;
+  font-size: 30px;
+}

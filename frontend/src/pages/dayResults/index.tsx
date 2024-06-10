@@ -5,14 +5,13 @@ import { canSSRAuth } from '../../utils/canSSRAuth';
 import { setupAPIClient } from '../../services/api';
 import Chart, { registerables } from 'chart.js/auto';
 import styles from './styles.module.scss';
-
-// Registrar os plugins do Chart.js
 Chart.register(...registerables);
+
 
 interface ProductProps {
     id: string;
     name: string;
-    price: string; // Adicione o preço aqui
+    price: string; 
 }
 
 interface ItemProps {
@@ -30,20 +29,20 @@ interface OrderProps {
     created_at: string;
 }
 
-export default function Results({ orders }: { orders: OrderProps[] }) {
-    // Referência para o elemento canvas do gráfico
+export default function dayResults({ orders }: { orders: OrderProps[] }) {
+    
     const chartRef = useRef<HTMLCanvasElement>(null);
-    // Referência para o objeto Chart
     const chartInstanceRef = useRef<Chart<"bar"> | null>(null);
-    // Estado para armazenar o total de itens vendidos
+  
     const [totalItems, setTotalItems] = useState<number>(0);
-    // Estado para armazenar o total de valor vendido no dia
     const [totalValue, setTotalValue] = useState<string>('0.00');
+
 
     useEffect(() => {
         if (!chartRef.current) return;
 
         let totalCount = 0;
+
         const itemCounts: { [itemName: string]: number } = {};
         orders.forEach((order) => {
             order.items.forEach((item) => {
@@ -54,13 +53,15 @@ export default function Results({ orders }: { orders: OrderProps[] }) {
         });
         setTotalItems(totalCount);
 
+
         let totalValue = 0;
+
         orders.forEach((order) => {
             order.items.forEach((item) => {
                 totalValue += parseFloat(item.product.price) * item.amount;
             });
         });
-        setTotalValue(totalValue.toFixed(2)); // Arredonda para 2 casas decimais
+        setTotalValue(totalValue.toFixed(2));
 
         if (chartInstanceRef.current) {
             chartInstanceRef.current.destroy();
@@ -103,7 +104,7 @@ export default function Results({ orders }: { orders: OrderProps[] }) {
             <div className={styles.container}>
                 <h1>Gráfico de itens vendidos no dia</h1>
                 <div className={styles.chartContainer}>
-                    <canvas ref={chartRef} width="300" height="300"></canvas>
+                    <canvas ref={chartRef} width="100" height="100"></canvas>
                 </div>
                 <p className={styles.totalItems}>
                     Total de itens vendidos:{" "}

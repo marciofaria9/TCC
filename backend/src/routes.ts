@@ -23,7 +23,9 @@ import { ListOrderController } from './controllers/Order/ListOrderController';
 import { DetailOrderCrontroller } from './controllers/Order/DetailOrderCrontroller';
 import { FinishOrderController } from './controllers/Order/FinishOrderController'
 
-import { ListTodayOrdersController } from './controllers/results/ListTodayordersController';
+import { ListTodayOrdersController } from './controllers/results/ListTodayOrdersController';
+import { ListMonthPizzasController } from './controllers/results/ListMonthPizzasController';
+
 
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
@@ -58,6 +60,7 @@ router.put('/order/finish', isAuthenticated, new FinishOrderController().handle 
 
 //RESULTS
 router.get('/order/today', isAuthenticated, new ListTodayOrdersController().handle)
+router.get('/order/pizza/month', isAuthenticated, new ListMonthPizzasController().handle)
 
 
 export { router }; 

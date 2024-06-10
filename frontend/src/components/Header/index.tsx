@@ -32,10 +32,15 @@ export function Header() {
                         <span>Cardapio</span>
                     </Link>
 
-                    <Link href="/results">
+                    <Link href="/dayResults">
                         <span>Resumo do Dia</span>
                     </Link>
 
+                    <Link href="/monthResults">
+                        <span>Resumo do Mês</span>
+                    </Link>
+ 
+ 
                     <button onClick={signOut}>
                         <FiLogOut color="#FFF" size={24} />
                     </button>
